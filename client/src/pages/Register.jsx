@@ -1,8 +1,8 @@
-import  {Link, useEffect, useState } from "react";
+import  {useEffect, useState } from "react";
 import logo from "../assets/black-logo.png";
 import logo_with_title from "../assets/logo-with-title.png";
 import {useDispatch, useSelector} from "react-redux"; 
-import {Navigate, useNavigate } from "react-router-dom";  
+import {Link, Navigate, useNavigate } from "react-router-dom";  
 import {register, resetAuthSlice} from "../store/slices/authSlice";
 import { toast } from "react-toastify";
 
@@ -35,7 +35,7 @@ const Register = () => {
       toast.error(error);
       dispatch(resetAuthSlice());
     }
-  }, [dispatch, isAuthenticated, error, loading]);
+  }, [dispatch, isAuthenticated, error, loading, message, navigateTo, email]);
 
   if(isAuthenticated) {
     return <Navigate to={"/"} />;
@@ -43,9 +43,9 @@ const Register = () => {
 
 
   return <>
-    <div className="flex felx-col justify-center md:flex-row h-screen">
+    <div className="flex flex-col justify-center md:flex-row h-screen">
       {/* Left side */}
-      <div className="hidden w-full md:w-1/2 bg-black text-white md:flex flex-col items-center justify-center p-8 rounded-br-[80px]">
+      <div className="hidden w-full md:w-1/2 bg-black text-white md:flex flex-col items-center justify-center p-8 rounded-tr-[80px] rounded-br-[80px]">
         <div className="text-center h-[376px]">
           <div className="flex justify-center mb-12">
             <img src={logo_with_title} alt="logo" />
