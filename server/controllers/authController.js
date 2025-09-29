@@ -168,7 +168,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
     const user = await User.findOne({
         resetPasswordToken,
-        resetPasswordExpiry: { $gt: Date.now() },
+        resetPasswordExpire: { $gt: Date.now() },
     });
     if(!user) {
         return next(new ErrorHandler("Reset password is invalid or has been expired.", 400));
@@ -188,7 +188,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     user.password = hashedPassword;
     user.resetPasswordToken = undefined;
-    user.resetPasswordExpiry = undefined;
+    user.resetPasswordExpire = undefined;
     await user.save();
     sendToken(user, 200, "Password reset successfully.", res);
 });
