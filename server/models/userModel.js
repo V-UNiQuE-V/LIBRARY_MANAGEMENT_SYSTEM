@@ -43,9 +43,9 @@ const userSchema = new mongoose.Schema({
         url: String,
     },
     verificationCode: Number,
-    verificationCodeExpiry: Date,
+    verificationCodeExpire: Date,
     resetPasswordToken: String,
-    resetPasswordExpiry: Date,
+    resetPasswordExpire: Date,
     },
     {
         timestamps: true,
@@ -60,7 +60,7 @@ userSchema.methods.generateVerificationCode = function() {
     }
     const verificationCode = generateRandomFiveDigitNumber();
     this.verificationCode = verificationCode;
-    this.verificationCodeExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes from now
+    this.verificationCodeExpire = Date.now() + 15 * 60 * 1000; // 15 minutes from now
     return verificationCode;
 };
 
