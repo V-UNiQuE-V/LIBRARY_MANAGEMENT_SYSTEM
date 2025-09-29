@@ -77,7 +77,7 @@ export const verifyOTP = catchAsyncErrors(async (req, res, next) => {
 
 
         const verificationCodeExpire = new Date (
-            user.verificationCodeExpiry
+            user.verificationCodeExpire
         ).getTime();
 
         if(currentTime > verificationCodeExpire) {
@@ -86,13 +86,11 @@ export const verifyOTP = catchAsyncErrors(async (req, res, next) => {
 
         user.accountVerified = true;
         user.verificationCode = null;
-        user.verificationCodeExpiry = null;
+        user.verificationCodeExpire = null;
         await user.save({validateModifiedOnly: true});
 
         sendToken(user, 200, "Account Verified.", res);
     } catch (error) {
-        // This line will print the exact TypeError in your terminal
-        console.error("THE CRASH HAPPENED HERE:", error);
         return next(new ErrorHandler("Internal server error.", 500));
     }
 });
@@ -159,7 +157,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
         });
     } catch (error) {
         user.resetPasswordToken = undefined;
-        user.resetPasswordExpiry = undefined;
+        user.resetPasswordExpire = undefined;
         await user.save({ validateBeforeSave: false});
         return next(new ErrorHandler(error.message, 500));
     }
