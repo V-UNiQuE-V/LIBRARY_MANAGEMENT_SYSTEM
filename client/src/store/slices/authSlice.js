@@ -131,7 +131,7 @@ const authSlice = createSlice({
 
 
 
-        resetauthSlice(state) {
+        Slice(state) {
             state.error = null;
             state.loading = false;
             state.message = null;
@@ -142,8 +142,8 @@ const authSlice = createSlice({
     },
 });
 
-export const resetauthSlice = () => (dispatch) => {
-    dispatch(authSlice.actions.resetauthSlice())
+export const resetAuthSlice = () => (dispatch) => {
+    dispatch(authSlice.actions.resetAuthSlice())
 }
 
 // (Pending) Fill the value
