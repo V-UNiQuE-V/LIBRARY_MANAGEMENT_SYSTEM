@@ -1,3 +1,5 @@
+
+
 import React from "react";
 import adminIcon from "../assets/pointing.png";
 import usersIcon from "../assets/people-black.png";
@@ -30,7 +32,9 @@ ChartJS.register(
 );
 
 const AdminDashboard = () => {
-  return <></>;
+  return <>
+  
+  </>;
 };
 
 export default AdminDashboard;
