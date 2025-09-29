@@ -28,6 +28,7 @@ const Register = () => {
 
 
   useEffect(() => {
+    // console.log("Message:", message);
     if (message) {
       navigateTo(`/otp-verification/${email}`);
     }
@@ -37,9 +38,9 @@ const Register = () => {
     }
   }, [dispatch, isAuthenticated, error, loading, message, navigateTo, email]);
 
-  if(isAuthenticated) {
-    return <Navigate to={"/"} />;
-  }
+  // if(isAuthenticated) {
+  //   return <Navigate to={"/"} />;
+  // }
 
 
   return <>
