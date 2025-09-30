@@ -30,13 +30,15 @@ const Register = () => {
   useEffect(() => {
     // console.log("Message:", message);
     if (message) {
+      toast.success(message);
+      dispatch(resetAuthSlice());
       navigateTo(`/otp-verification/${email}`);
     }
     if (error) {
       toast.error(error);
       dispatch(resetAuthSlice());
     }
-  }, [dispatch, isAuthenticated, error, loading, message, navigateTo, email]);
+  }, [dispatch, isAuthenticated, error, loading]);
 
   // if(isAuthenticated) {
   //   return <Navigate to={"/"} />;
@@ -99,8 +101,7 @@ const Register = () => {
               </div>
               <div className="block md:hidden font-semibold mt-5">
                 <p className="text-gray-800 text-center mb-5">
-                  Already have Account? 
-                  <Link to="/login" className="text-sm text-gray-500 hover:underline">Sign In</Link>
+                  Already have Account? <Link to="/login" className="text-sm text-gray-500 hover:underline">Sign In</Link>
                 </p>
               </div>
               <button type="submit" className="border-2 mt-5 border-black w-full font-semibold bg-black text-white py-2 rounded-lg hover:bg-white hover:text-black transition">SIGN UP</button>
