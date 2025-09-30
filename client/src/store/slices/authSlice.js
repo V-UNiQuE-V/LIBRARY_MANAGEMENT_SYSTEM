@@ -1,7 +1,7 @@
 /* eslint-disable no-self-assign */
 import {createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
-
+import { toast } from 'react-toastify';
 
 const authSlice = createSlice({
     name: "auth",
@@ -131,7 +131,7 @@ const authSlice = createSlice({
 
 
 
-        Slice(state) {
+        resetAuthSlice(state) {
             state.error = null;
             state.loading = false;
             state.message = null;
@@ -145,8 +145,6 @@ const authSlice = createSlice({
 export const resetAuthSlice = () => (dispatch) => {
     dispatch(authSlice.actions.resetAuthSlice())
 }
-
-// (Pending) Fill the value
 
 export const register = (data) => async(dispatch) => {
     dispatch(authSlice.actions.registerRequest());
@@ -227,20 +225,61 @@ export const forgotPassword = (email) => async(dispatch) => {
     });
 }
 
+
+
+// In authSlice.js
+
+const handleApiError = (error, dispatch, failureAction) => {
+    
+    // 1. Attempt to extract the custom message from the backend (ErrorHandler output)
+    const backendMsg = error.response?.data?.message;
+
+    // 2. Fallback message for network or unexpected errors
+    const fallbackMsg = "A network or unexpected error occurred. Please try again.";
+
+    // 3. Determine the final message to use
+    const finalMsg = backendMsg || fallbackMsg; 
+
+    // 4. CRITICAL: Display the determined message
+    toast.error(finalMsg); 
+        
+    // 5. Dispatch the failure action. We use the backendMsg if available, otherwise the fallback.
+    // This updates the Redux store with the most specific message found.
+    dispatch(failureAction(backendMsg || fallbackMsg));
+};
+
+// ... (Ensure all your thunks use this updated handleApiError function)
+
+
 export const resetPassword = (data, token) => async(dispatch) => {
     dispatch(authSlice.actions.resetPasswordRequest());
-    await axios.put(`http://localhost:4000/api/v1/auth/password/reset/${token}`, 
-        data, {
-        withCredentials: true,
-        headers: {
-            "Content-Type": "application/json",
-        },
-    }).then(res=>{
-        dispatch(authSlice.actions.resetPasswordSuccess(res.data))
-    }).catch(error=>{
-        dispatch(authSlice.actions.resetPasswordFailed(error.response.data.message));
-    });
+    try {
+        const res = await axios.put(`http://localhost:4000/api/v1/auth/password/reset/${token}`, 
+            data, {
+            withCredentials: true,
+            headers: { "Content-Type": "application/json" },
+        });
+        dispatch(authSlice.actions.resetPasswordSuccess(res.data));
+    } catch (error) {
+        // 🔑 FIX APPLIED HERE
+        handleApiError(error, dispatch, authSlice.actions.resetPasswordFailed);
+    }
 }
+
+// export const resetPassword = (data, token) => async(dispatch) => {
+//     dispatch(authSlice.actions.resetPasswordRequest());
+//     await axios.put(`http://localhost:4000/api/v1/auth/password/reset/${token}`, 
+//         data, {
+//         withCredentials: true,
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//     }).then(res=>{
+//         dispatch(authSlice.actions.resetPasswordSuccess(res.data))
+//     }).catch(error=>{
+//         dispatch(authSlice.actions.resetPasswordFailed(error.response.data.message));
+//     });
+// }
 
 export const updatePassword = (data) => async(dispatch) => {
     dispatch(authSlice.actions.updatePasswordRequest());
