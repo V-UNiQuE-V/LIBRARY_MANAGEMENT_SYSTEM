@@ -17,7 +17,7 @@ export const addBook = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const deleteBook = catchAsyncErrors(async (req, res, next) => {
+export const getAllBooks = catchAsyncErrors(async (req, res, next) => {
     const books = await Book.find();
     res.status(200).json({
         success: true,
@@ -25,8 +25,8 @@ export const deleteBook = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const getAllBooks = catchAsyncErrors(async (req, res, next) => {
-    const {id} = res.params;
+export const deleteBook = catchAsyncErrors(async (req, res, next) => {
+    const {id} = req.params;
     const book = await Book.findById(id);
     if(!book) {
         return next(new ErrorHandler("Book not found", 404));
