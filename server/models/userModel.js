@@ -16,6 +16,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         requeired: true,
         select: false,
+        // minLength: [8, "Minimum length of password must be at least 8 characters."],
+        // maxLength: [16, "Maximum length of password cannot exceet 16 characters."]
     },
     role: {
         type: String,

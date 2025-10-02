@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {useEffect} from "react";
 import logo_with_title from "../assets/logo-with-title.png";
 import logoutIcon from "../assets/logout.png";
@@ -13,11 +14,12 @@ import {resetAuthSlice, logout} from "../store/slices/authSlice";
 import {toast} from "react-toastify";
 import { toggleAddNewAdminPopup, toggleSettingPopup } from "../store/slices/popupSlice";
 import AddNewAdmin from "../popups/AddNewAdmin";
+import SettingPopup from "../popups/SettingPopup";
 
 
 const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
   const dispatch = useDispatch();
-  const { addNewAdminPopup } = useSelector((state) => state.popup);
+  const { addNewAdminPopup, settingPopup } = useSelector((state) => state.popup);
 
   const { loading, error, message, isAuthenticated, user } = useSelector(
     (state) => state.auth
@@ -83,7 +85,7 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
                 <RiAdminFill className="w-6 h-6" /> <span>Add New Admin</span>
               </button>
             </>
-          )}
+            )}
           {isAuthenticated && user?.role === "User" && (
             <button
               onClick={() => setSelectedComponent("My Borrowed Books")}
@@ -95,8 +97,8 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
           )}
           <button
             onClick={() => dispatch(toggleSettingPopup())}
-            // md:hidden
-            className=" w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
+            
+            className="md:hidden w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
           >
             <img src={settingIcon} alt="setting" />{" "}
             <span>Update Credentials</span>
@@ -118,6 +120,7 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
         />
       </aside>
       {addNewAdminPopup && <AddNewAdmin />}
+      {settingPopup && <SettingPopup />}
     </>
   );
 };
@@ -129,7 +132,7 @@ export default SideBar;
 
 
 
-/* eslint-disable react/prop-types */
+
 // import React, {useEffect} from "react";
 // import logo_with_title from "../assets/logo-with-title.png";
 // import logoutIcon from "../assets/logout.png";

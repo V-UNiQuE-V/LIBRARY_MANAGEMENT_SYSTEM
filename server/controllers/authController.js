@@ -23,7 +23,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
             email,
             accountVerified: false,
         });
-        if (registrationAttemptByUser.length >= 5) {
+        if (registrationAttemptByUser.length >= 5) {    
             return next(new ErrorHandler("You have exceeded the number of registration attempts. Please contact support.", 400));
         }
         if (password.length < 8 || password.length > 16) {
@@ -169,12 +169,9 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     
     const user = await User.findOne({
         resetPasswordToken,
-<<<<<<< HEAD
         // CONFIRM: Use the exact schema field name
         resetPasswordExpire: { $gt: Date.now() }, 
-=======
         resetPasswordExpire: { $gt: Date.now() },
->>>>>>> d97e113aa6d88a219e83c63c8cd77e931974aaa9
     });
     
     if(!user) {
@@ -198,16 +195,12 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     
     // CONFIRM: Clear the exact schema field names
     user.resetPasswordToken = undefined;
-<<<<<<< HEAD
     user.resetPasswordExpire = undefined; 
     
     // 🔑 CRITICAL FIX: Add validateBeforeSave: false
     await user.save({ validateBeforeSave: false }); 
-    
-=======
     user.resetPasswordExpire = undefined;
     await user.save();
->>>>>>> d97e113aa6d88a219e83c63c8cd77e931974aaa9
     sendToken(user, 200, "Password reset successfully.", res);
 });
 

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import settingIcon from "../assets/setting.png";
 import userIcon from "../assets/user.png";
 import {useDispatch, useSelector} from "react-redux";
@@ -49,7 +49,7 @@ const Header = () => {
         <span>{currentDate}</span>
       </div>
       <span className="bg-black h-14 w-[2px]" />
-      <img src={settingIcon} alt="settingIcon" className="w-8 h-8" onClick={() => toggleSettingPopup()}/>
+      <img src={settingIcon} alt="settingIcon" className="w-8 h-8" onClick={() => dispatch(toggleSettingPopup())}/>
     </div>
   </header>
 
