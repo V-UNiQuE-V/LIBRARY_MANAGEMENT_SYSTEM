@@ -8,7 +8,7 @@ import bookRouter from './routes/bookRouter.js';
 import borrowRouter from './routes/borrowRouter.js';
 import userRouter from './routes/userRouter.js';
 import expressFileupload from "express-fileupload"
-import errorMiddleware from './middlewares/errorMiddleware.js';
+import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import { removeUnverifiedAccounts } from './services/removeUnverifiedAccounts.js';
 import { notifyUsers } from './services/notifyUsers.js';
 
