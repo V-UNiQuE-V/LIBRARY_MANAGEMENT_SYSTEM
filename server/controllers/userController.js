@@ -16,31 +16,34 @@ export const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
     if (!req.files || Object.keys(req.files).length === 0) {
         return next(new ErrorHandler("Admin avatar is required.", 400));
     }
-    const { name, email, password } = req.body;
+    const { name, email, password } = req.body || {};
     if (!name || !email || !password) {
         return next(new ErrorHandler("Please fill all fields.", 400));
     }
     const isRegistered = await User.findOne({ email, accountVerified: true });
-    if (!isRegistered) {
-        return next(new ErrorHandler("User already registered", 400));
+    if (isRegistered) {
+        return next(new ErrorHandler("User already registered.", 400));
     }
     if(password.length < 8 || password.length > 16) {
         return next(new ErrorHandler("Password must be 8 to 16 characters long.", 400));
     }
     const {avatar} = req.files;
-    const allowedFormats = ["image/png","image/jpeg, image/webp"]
-    if(!allowedFormats.includes(avatar,mimetype)) {
+    const allowedFormats = ["image/png","image/jpeg","image/webp"]
+    if(!allowedFormats.includes(avatar.mimetype)) {
         return next(new ErrorHandler("File format not supported.", 400));
     }
     const hashedPassword = await bcrypt.hash(password,10);
     const cloudinaryResponse = await cloudinary.uploader.upload(
         avatar.tempFilePath, {
-            folder: "LIBRARY_MANAGEMENT_SYSTEM_AVATAR"
+            folder: "LIBRARY_MANAGEMENT_SYSTEM_ADMIN_AVATAR"
         }
     );
     if(!cloudinaryResponse || cloudinaryResponse.error){
         console.error("cloudinary error:",
             cloudinaryResponse.error || "Unknown cloudinary error."
+        );
+        return next(
+            new ErrorHandler("Failed to upload avatar image to cloudinary.",500)
         );
     }
     const admin = await User.create({

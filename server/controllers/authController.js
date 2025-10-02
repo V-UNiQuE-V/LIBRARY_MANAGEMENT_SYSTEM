@@ -108,7 +108,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
     if(!isPasswordMatched) {
         return next(new ErrorHandler("Invalid email or password.", 404));
     }
-    sendToken(user, 200, "User Login successful.", res);
+    sendToken(user, 200, "Login successful.", res);
 });
 
 export const logout = catchAsyncErrors(async (req, res, next) => {
@@ -172,12 +172,11 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
         // CONFIRM: Use the exact schema field name
         resetPasswordExpire: { $gt: Date.now() }, 
         resetPasswordExpire: { $gt: Date.now() },
+        resetPasswordExpire: { $gt: Date.now() }, 
     });
-    
     if(!user) {
         return next(new ErrorHandler("Reset password is invalid or has been expired.", 400));
     }
-    
     if(req.body.password !== req.body.confirmPassword) {
         return next(new ErrorHandler("Password & confirmed password do not match.", 400)); 
     }
@@ -192,11 +191,8 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     user.password = hashedPassword;
-    
-    // CONFIRM: Clear the exact schema field names
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined; 
-    
     // 🔑 CRITICAL FIX: Add validateBeforeSave: false
     await user.save({ validateBeforeSave: false }); 
     user.resetPasswordExpire = undefined;
