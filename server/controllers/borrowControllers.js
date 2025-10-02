@@ -22,7 +22,7 @@ export const recordBorrowedBook = catchAsyncErrors(async (req, res, next) => {
     if (!book) {
         return next(new ErrorHandler("Book not found.", 404));
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, accountVerified: true });
     if (!user) {
         return next(new ErrorHandler("User not found.", 404));
     }
@@ -109,9 +109,8 @@ export const returnBorrowBook = catchAsyncErrors(async (req, res, next) => {
     await borrow.save();
     res.status(200).json({
        success: true,
-        message: fine !== 0 ? `The book has been returned successfully. The total charges including a fine, are ₹${
-            fine + book.price
-        }`
+        message: fine !== 0
+        ? `The book has been returned successfully. The total charges including a fine, are ₹${fine + book.price}`
         : `The book has been returned successfully. The total charges are ₹${book.price}`
     });
 });

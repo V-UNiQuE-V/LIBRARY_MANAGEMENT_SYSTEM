@@ -1,5 +1,4 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
-// import express from "express"
 import { Book } from "../models/bookModel.js"
 import { User } from "../models/userModel.js"
 import ErrorHandler from "../middlewares/errorMiddleware.js";
@@ -9,12 +8,32 @@ export const addBook = catchAsyncErrors(async (req, res, next) => {
     if (!title || !author || !description || !price || !quantity) {
         return next(new ErrorHandler("Please fill all fields.", 400));
     }
-    const book = await Book.create({ title, author, description, price, quantity });
-    res.status(201).json({
-        success: true,
-        message: "Book added Successfully.",
-        book,
-    });
+
+    let book = await Book.findOne({ title });
+
+    if (book) {
+        const quantityToAdd = Number(quantity) || 0;
+        book.quantity += quantityToAdd;
+        await book.save();
+        res.status(200).json({
+            success: true,
+            message: `The book already exists. Quantity updated to ${book.quantity}.`,
+            book,
+        });
+    } else {
+        const newBook = await Book.create({
+            title,
+            author,
+            description,
+            price,
+            quantity,
+        });
+        res.status(201).json({
+            success: true,
+            message: "Book added successfully.",
+            book: newBook,
+        });
+    }
 });
 
 export const getAllBooks = catchAsyncErrors(async (req, res, next) => {
@@ -37,4 +56,3 @@ export const deleteBook = catchAsyncErrors(async (req, res, next) => {
         message: "Book deleted successfully.",
     });
 });
-
