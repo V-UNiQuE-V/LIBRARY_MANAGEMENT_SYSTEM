@@ -166,13 +166,21 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     const { token } = req.params;
     const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
+    
     const user = await User.findOne({
         resetPasswordToken,
+<<<<<<< HEAD
+        // CONFIRM: Use the exact schema field name
+        resetPasswordExpire: { $gt: Date.now() }, 
+=======
         resetPasswordExpire: { $gt: Date.now() },
+>>>>>>> d97e113aa6d88a219e83c63c8cd77e931974aaa9
     });
+    
     if(!user) {
         return next(new ErrorHandler("Reset password is invalid or has been expired.", 400));
     }
+    
     if(req.body.password !== req.body.confirmPassword) {
         return next(new ErrorHandler("Password & confirmed password do not match.", 400)); 
     }
@@ -187,9 +195,19 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     user.password = hashedPassword;
+    
+    // CONFIRM: Clear the exact schema field names
     user.resetPasswordToken = undefined;
+<<<<<<< HEAD
+    user.resetPasswordExpire = undefined; 
+    
+    // 🔑 CRITICAL FIX: Add validateBeforeSave: false
+    await user.save({ validateBeforeSave: false }); 
+    
+=======
     user.resetPasswordExpire = undefined;
     await user.save();
+>>>>>>> d97e113aa6d88a219e83c63c8cd77e931974aaa9
     sendToken(user, 200, "Password reset successfully.", res);
 });
 
