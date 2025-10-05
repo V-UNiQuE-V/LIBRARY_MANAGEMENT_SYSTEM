@@ -15,7 +15,7 @@ const Login = () => {
 
   const dispatch = useDispatch();
 
-  const {loading, error, isAuthenticated} = useSelector((state) => state.auth);
+  const {loading, error, message, isAuthenticated} = useSelector((state) => state.auth);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -27,15 +27,15 @@ const Login = () => {
 
     useEffect(() => {
       // console.log("Message:", message);
-      // if (message) {
-      //   toast.success(message);
-      //   dispatch(resetAuthSlice());
-      // }
+      if (message) {
+        toast.success(message);
+        dispatch(resetAuthSlice());
+      }
       if (error) {
         toast.error(error);
         dispatch(resetAuthSlice());
       }
-    }, [dispatch, isAuthenticated, error, loading]);
+    }, [dispatch, isAuthenticated, error, loading, message]);
 
   if(isAuthenticated) {
     return <Navigate to={"/"} />;

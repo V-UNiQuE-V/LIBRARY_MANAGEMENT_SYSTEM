@@ -38,11 +38,11 @@ const Register = () => {
       toast.error(error);
       dispatch(resetAuthSlice());
     }
-  }, [dispatch, isAuthenticated, error, loading]);
+  }, [dispatch, isAuthenticated, error, loading, navigateTo, email, message]);
 
-  // if(isAuthenticated) {
-  //   return <Navigate to={"/"} />;
-  // }
+  if(isAuthenticated) {
+    return <Navigate to={"/"} />;
+  }
 
 
   return <>
