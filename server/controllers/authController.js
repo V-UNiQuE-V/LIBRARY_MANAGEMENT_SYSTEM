@@ -7,15 +7,19 @@ import { sendVerificationCode } from "../utils/sendVerificationCode.js";
 import { sendToken } from "../utils/sendToken.js";
 import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js";
 import { sendEmail } from "../utils/sendEmail.js";
-import { validatePassword } from "../utils/ValidatePassword.js";
+import { validatePassword } from "../utils/validatePassword.js";
+import { validateFields } from "../utils/validateFields.js";
 
 
 export const register = catchAsyncErrors(async (req, res, next) => {
     try {
         const {name, email, password} = req.body;
-        if(!name || !email || !password) {
-            return next(new ErrorHandler("Please enter all fields.", 400));
+        // validate inputs
+        const validationError = validateFields({name, email, password});
+        if(validationError) {
+            return next(new ErrorHandler(validationError, 400));
         }
+
         const isRegistered = await User.findOne({email, accountVerified: true});
         if (isRegistered) {
             return next(new ErrorHandler("User already exists.", 400));
@@ -28,14 +32,11 @@ export const register = catchAsyncErrors(async (req, res, next) => {
             return next(new ErrorHandler("You have exceeded the number of registration attempts. Please contact support.", 400));
         }
 
-        const isPasswordValidate  = validatePassword(password);
+        const passwordValidationError  = validatePassword(password);
 
-        if(isPasswordValidate) {
-            return next(new ErrorHandler(isPasswordValidate, 400));
+        if(passwordValidationError) {
+            return next(new ErrorHandler(passwordValidationError, 400));
         }
-        // if (password.length < 8 || password.length > 16) {
-        //     return next(new ErrorHandler("Password must be between 8 and 16 characters.", 400));
-        // }
         
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
@@ -106,9 +107,12 @@ export const verifyOTP = catchAsyncErrors(async (req, res, next) => {
 
 export const login = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
-    if(!email || !password) {
-        return next(new ErrorHandler("Please enter all fields.", 400));
+
+    const validationError = validateFields({ email, password });
+    if (validationError) {
+        return next(new ErrorHandler(validationError, 400));
     }
+
     const user = await User.findOne({ email, accountVerified: true }).select("+password");
     if(!user) {
         return next(new ErrorHandler("Invalid email or password.", 404));
@@ -170,7 +174,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
         await user.save({ validateBeforeSave: false});
-        return next(new ErrorHandler(error.message, 500));
+        return next(new ErrorHandler(error.message || "Cannot send email", 500));
     }
 });
 
@@ -180,24 +184,15 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     
     const user = await User.findOne({
         resetPasswordToken,
-        // CONFIRM: Use the exact schema field name
-        resetPasswordExpire: { $gt: Date.now() }, 
-        resetPasswordExpire: { $gt: Date.now() },
-        resetPasswordExpire: { $gt: Date.now() }, 
+        resetPasswordExpire: { $gt: Date.now() },  
     });
     if(!user) {
         return next(new ErrorHandler("Reset password is invalid or has been expired.", 400));
     }
-    if(req.body.password !== req.body.confirmPassword) {
-        return next(new ErrorHandler("Password & confirmed password do not match.", 400)); 
-    }
-    if(
-        req.body.password.length < 8 || 
-        req.body.password.length > 16 || 
-        req.body.confirmPassword.length < 8 || 
-        req.body.confirmPassword.length > 16
-    ) {
-        return next(new ErrorHandler("Password must be between 8 and 16 characters.", 400));
+
+    const passwordValidationError = validatePassword(req.body.password, req.body.confirmPassword);
+    if(passwordValidationError) {
+        return next(new ErrorHandler(passwordValidationError, 400));
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -214,8 +209,14 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 export const updatePassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user._id).select("+password");
     const {currentPassword, newPassword, confirmNewPassword} = req.body;
-    if(!currentPassword || !newPassword || !confirmNewPassword) {
-        return next(new ErrorHandler("Please enter all fields.", 400));
+
+    const validateFieldsError = validateFields({
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
+    });
+    if(validateFieldsError) {
+        return next(new ErrorHandler(validateFieldsError,400));
     }
     const isPasswordMatched = await bcrypt.compare(
         currentPassword,
@@ -224,16 +225,10 @@ export const updatePassword = catchAsyncErrors(async (req, res, next) => {
     if(!isPasswordMatched){
         return next(new ErrorHandler("Current password is incorrect.", 400));
     }
-    if(
-        newPassword.length < 8 || 
-        newPassword.length > 16 || 
-        confirmNewPassword.length < 8 || 
-        confirmNewPassword.length > 16
-    ) {
-            return next(new ErrorHandler("Password must be between 8 and 16 characters.", 400));
-    }
-    if(newPassword !== confirmNewPassword) {
-        return next(new ErrorHandler("New password and confirm new password do not match.", 400));
+
+    const passwordValidationError = validatePassword(newPassword, confirmNewPassword);
+    if(passwordValidationError) {
+        return next(new ErrorHandler(passwordValidationError, 400));
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

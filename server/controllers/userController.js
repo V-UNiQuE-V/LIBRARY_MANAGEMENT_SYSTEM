@@ -3,9 +3,11 @@ import ErrorHandler from "../middlewares/errorMiddleware.js";
 import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt"
 import {v2 as cloudinary} from "cloudinary"
+import { validateFields } from "../utils/validateFields.js";
+import { validatePassword } from "../utils/ValidatePassword.js";
 
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
-    const users = await User.find({ accountVerified: true });
+    const users = await User.find({ accountVerified: true }).lean();
     res.status(200).json({
         success: true,
         users,
@@ -17,22 +19,26 @@ export const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Admin avatar is required.", 400));
     }
     const { name, email, password } = req.body || {};
-    if (!name || !email || !password) {
-        return next(new ErrorHandler("Please fill all fields.", 400));
-    }
+
+    const validateFieldsError = validateFields({ name, email, password});
+    if (validateFieldsError)
+        return next(new ErrorHandler(validateFieldsError, 400));
+
     const isRegistered = await User.findOne({ email, accountVerified: true });
     if (isRegistered) {
         return next(new ErrorHandler("User already registered.", 400));
     }
-    if(password.length < 8 || password.length > 16) {
-        return next(new ErrorHandler("Password must be 8 to 16 characters long.", 400));
-    }
-    const {avatar} = req.files;
-    const allowedFormats = ["image/png","image/jpeg","image/webp"]
-    if(!allowedFormats.includes(avatar.mimetype)) {
+
+    const validatePasswordError = validatePassword(password);
+    if (validatePasswordError) 
+        return next(new ErrorHandler(validatePasswordError, 400));
+
+    const { avatar } = req.files;
+    const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
+    if (!allowedFormats.includes(avatar.mimetype)) {
         return next(new ErrorHandler("File format not supported.", 400));
     }
-    const hashedPassword = await bcrypt.hash(password,10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const cloudinaryResponse = await cloudinary.uploader.upload(
         avatar.tempFilePath, {
             folder: "LIBRARY_MANAGEMENT_SYSTEM_ADMIN_AVATAR"

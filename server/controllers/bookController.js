@@ -1,12 +1,13 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import { Book } from "../models/bookModel.js"
-import { User } from "../models/userModel.js"
 import ErrorHandler from "../middlewares/errorMiddleware.js";
+import { validateFields } from "../utils/validateFields.js";
 
 export const addBook = catchAsyncErrors(async (req, res, next) => {
     const { title, author, description, price, quantity } = req.body;
-    if (!title || !author || !description || !price || !quantity) {
-        return next(new ErrorHandler("Please fill all fields.", 400));
+    const validateFieldsError = validateFields({ title, author, description, price, quantity });
+    if (validateFieldsError) {
+        return next(new ErrorHandler(validateFieldsError, 400));
     }
 
     let book = await Book.findOne({ title });
@@ -37,7 +38,7 @@ export const addBook = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getAllBooks = catchAsyncErrors(async (req, res, next) => {
-    const books = await Book.find();
+    const books = await Book.find().lean();
     res.status(200).json({
         success: true,
         books,
@@ -46,11 +47,10 @@ export const getAllBooks = catchAsyncErrors(async (req, res, next) => {
 
 export const deleteBook = catchAsyncErrors(async (req, res, next) => {
     const {id} = req.params;
-    const book = await Book.findById(id);
+    const book = await Book.findByIdAndDelete(id);
     if(!book) {
         return next(new ErrorHandler("Book not found", 404));
     }
-    await book.deleteOne();
     res.status(200).json({
         success: true,
         message: "Book deleted successfully.",
