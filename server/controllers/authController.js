@@ -7,6 +7,7 @@ import { sendVerificationCode } from "../utils/sendVerificationCode.js";
 import { sendToken } from "../utils/sendToken.js";
 import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import { validatePassword } from "../utils/ValidatePassword.js";
 
 
 export const register = catchAsyncErrors(async (req, res, next) => {
@@ -26,15 +27,23 @@ export const register = catchAsyncErrors(async (req, res, next) => {
         if (registrationAttemptByUser.length >= 5) {
             return next(new ErrorHandler("You have exceeded the number of registration attempts. Please contact support.", 400));
         }
-        if (password.length < 8 || password.length > 16) {
-            return next(new ErrorHandler("Password must be between 8 and 16 characters.", 400));
+
+        const isPasswordValidate  = validatePassword(password);
+
+        if(isPasswordValidate) {
+            return next(new ErrorHandler(isPasswordValidate, 400));
         }
+        // if (password.length < 8 || password.length > 16) {
+        //     return next(new ErrorHandler("Password must be between 8 and 16 characters.", 400));
+        // }
+        
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
             name,
             email,
             password: hashedPassword,
         });
+
         const verificationCode = await user.generateVerificationCode();
         await user.save();
         sendVerificationCode(verificationCode, email, res);
