@@ -24,7 +24,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
             email,
             accountVerified: false,
         });
-        if (registrationAttemptByUser.length >= 5) {
+        if (registrationAttemptByUser.length >= 5) {    
             return next(new ErrorHandler("You have exceeded the number of registration attempts. Please contact support.", 400));
         }
 
@@ -124,6 +124,8 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     res.status(200).cookie("token", null, {
         expires: new Date(Date.now()),
         httpOnly: true,
+        secure: true,
+        sameSlite: "None",
     }).json({
         success: true,
         message: "Logged out successfully.",
@@ -178,6 +180,9 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     
     const user = await User.findOne({
         resetPasswordToken,
+        // CONFIRM: Use the exact schema field name
+        resetPasswordExpire: { $gt: Date.now() }, 
+        resetPasswordExpire: { $gt: Date.now() },
         resetPasswordExpire: { $gt: Date.now() }, 
     });
     if(!user) {
@@ -199,6 +204,9 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     user.password = hashedPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined; 
+    // 🔑 CRITICAL FIX: Add validateBeforeSave: false
+    await user.save({ validateBeforeSave: false }); 
+    user.resetPasswordExpire = undefined;
     await user.save();
     sendToken(user, 200, "Password reset successfully.", res);
 });

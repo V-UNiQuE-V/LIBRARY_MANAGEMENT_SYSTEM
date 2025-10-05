@@ -108,7 +108,7 @@ export const returnBorrowBook = catchAsyncErrors(async (req, res, next) => {
     borrow.fine = fine;
     await borrow.save();
     res.status(200).json({
-        success: true,
+       success: true,
         message: fine !== 0
         ? `The book has been returned successfully. The total charges including a fine, are ₹${fine + book.price}`
         : `The book has been returned successfully. The total charges are ₹${book.price}`
