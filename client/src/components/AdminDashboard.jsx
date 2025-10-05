@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import adminIcon from "../assets/pointing.png";
+import avatarHolder from "../assets/placeholder.jpg";
 import usersIcon from "../assets/people-black.png";
 import bookIcon from "../assets/book-square.png";
 import { Pie } from "react-chartjs-2";
@@ -143,6 +144,23 @@ const AdminDashboard = () => {
                 <h4 className="font-black text-3xl">{totalAdmin}</h4>
                 <p className="font-light text-gray-700 text-sm">
                   Total Admin Count
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col lg:flex-row flex-1">
+            <div className="flex flex-col lg:flex-row flex-1 items-center justify-center">
+              <div className="bg-white p-5 rounded-lg shadow-lg h-full flex flex-col justify-center items-center">
+                <img 
+                  src={user && user?.avatar?.url || "/avatarHolder"}
+                  alt="Admin Profile Pic"
+                  className="rounded-full w-32 h-32 object-cover"
+                />
+                <h2 className="text-xl 2xl:text-2xl font-semibold text-center">
+                  {user && user.name}
+                </h2>
+                <p className="text-gray-600 text-sm 2xl:text-base text-center">
+                  Welcome to your admin dashboard. Here you can manage all the settings and monitor the statistics.
                 </p>
               </div>
             </div>

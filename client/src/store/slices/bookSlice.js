@@ -39,6 +39,24 @@ const bookSlice = createSlice({
         state.loading = false;
         state.error = action.payload;   
         },
+
+        deleteBookRequest(state) {
+            state.loading = true;
+            state.error = null;
+            state.message = null;
+        },
+        deleteBookSuccess(state, action) {
+            state.loading = false;
+            state.message = action.payload.message;
+            state.books = state.books.filter(
+                book => book._id !== action.payload.bookId
+            );
+        },
+        deleteBookFailed(state, action) {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
         resetBookSlice(state){
             state.error = null;
             state.message = null;
@@ -79,6 +97,22 @@ export const addBook = (data) =>async (dispatch)=>{
     })
 
 };
+
+
+export const deleteBook = (bookId) => async(dispatch) => {
+    try {
+        dispatch(bookSlice.actions.deleteBookRequest());
+        const { data } = await axios.delete(
+            `http://localhost:4000/api/v1/book/delete/${bookId}`, 
+            { withCredentials: true }
+        );
+        dispatch(
+            bookSlice.actions.deleteBookSuccess({message: data.message, bookId})
+        );
+    } catch (error) {
+        dispatch(bookSlice.actions.deleteBookFailed(error.response.data.message));
+    }
+}
 
 export const resetBookSlice = () => (dispatch) => {
     dispatch(bookSlice.actions.resetBookSlice());
