@@ -21,8 +21,8 @@ const ResetPassword = () => {
     const formData = new FormData();
     formData.append("password", password);
     formData.append("confirmPassword", confirmPassword);
-    dispatch(resetPassword(data, token));
-  }   
+    dispatch(resetPassword(formData, token));
+  }
 
   useEffect(() => {
       if (message) {

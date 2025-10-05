@@ -4,7 +4,7 @@ import { User } from "../models/userModel.js";
 import { sendEmail } from "../utils/sendEmail.js";
 
 export const notifyUsers = () => {
-    cron.schedule("*/30 * * * *", async () => {
+    cron.schedule("*/1 * * * *", async () => {
         try {
             const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
             const borrowers = await Borrow.find({
