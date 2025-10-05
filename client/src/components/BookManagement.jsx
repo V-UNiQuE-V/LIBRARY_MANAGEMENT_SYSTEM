@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import { BookA, NotebookPen } from "lucide-react";
+import { BookA, NotebookPen, Trash2 } from "lucide-react";
 import {useDispatch, useSelector} from "react-redux";
-import {toggleAddBookPopup, toggleReadBookPopup, toggleRecordBookPopup} from "../store/slices/popUpSlice";
+import {toggleAddBookPopup, toggleDeleteBookPopup, toggleReadBookPopup, toggleRecordBookPopup} from "../store/slices/popUpSlice";
 import {toast} from "react-toastify";
 import {fetchAllBooks, resetBookSlice } from "../store/slices/bookSlice";
 import {fetchAllBorrowedBooks, resetBorrowSlice} from "../store/slices/borrowSlice";
@@ -9,6 +9,7 @@ import Header from "../layout/Header";
 import AddBookPopup from "../popups/AddBookPopup";
 import ReadBookPopup from "../popups/ReadBookPopup";
 import RecordBookPopup from "../popups/RecordBookPopup";
+import DeleteBookPopup from "../popups/DeleteBookPopup";
 
 
 const BookManagement = () => {
@@ -16,7 +17,7 @@ const BookManagement = () => {
 
   const {loading, error, message,books} = useSelector(state => state.book);
   const {isAuthenticated, user} = useSelector((state) => state.auth);
-  const { addBookPopup, readBookPopup, recordBookPopup} = useSelector((state) => state.popup);
+  const { addBookPopup, readBookPopup, recordBookPopup, deleteBookPopup, bookIdToDelete} = useSelector((state) => state.popup);
 
 const {
   // loading: borrowSliceLoading,
@@ -128,6 +129,12 @@ useEffect(() => {
                     <NotebookPen 
                       onClick={() => openRecordBookPopup(book._id)}
                     />
+                    <Trash2 
+                      className="text-red-500 cursor-pointer"
+                      onClick={() => 
+                        dispatch(toggleDeleteBookPopup(book._id))
+                      }
+                    />
                  </td>
                 )}
                   </tr>
@@ -143,6 +150,7 @@ useEffect(() => {
   {addBookPopup && <AddBookPopup/>}
   {readBookPopup && <ReadBookPopup book={readBook}/>}
   {recordBookPopup && <RecordBookPopup bookId={borrowBookId}/>}
+  {deleteBookPopup && <DeleteBookPopup bookId={bookIdToDelete}/>}
 
   </>;
 };
