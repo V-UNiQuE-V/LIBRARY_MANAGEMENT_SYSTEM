@@ -4,7 +4,7 @@ import keyIcon from "../assets/key.png";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { addNewAdmin } from "../store/slices/userSlice";
-import {toggleAddNewAdminPopup} from "../store/slices/popupSlice";
+import {toggleAddNewAdminPopup} from "../store/slices/popUpSlice";
 
 
 const AddNewAdmin = () => {
