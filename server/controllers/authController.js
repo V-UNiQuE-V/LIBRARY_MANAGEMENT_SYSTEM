@@ -9,6 +9,7 @@ import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js"
 import { sendEmail } from "../utils/sendEmail.js";
 import { validatePassword } from "../utils/validatePassword.js";
 import { validateFields } from "../utils/validateFields.js";
+import passport from "passport";
 
 
 export const register = catchAsyncErrors(async (req, res, next) => {
@@ -239,3 +240,24 @@ export const updatePassword = catchAsyncErrors(async (req, res, next) => {
         message: "Password updated successfully.",
     });
 });
+
+// Google OAuth
+export const googleAuth = passport.authenticate('google', {
+    scope: ['profile', 'email']
+});
+
+export const googleAuthCallback = (req, res, next) => {
+    passport.authenticate('google', { session: false }, (err, user, info) => {
+        if (err) {
+            return res.redirect(`${process.env.FRONTEND_URL}/login?error=authentication_failed`);
+        }
+        if (!user) {
+            return res.redirect(`${process.env.FRONTEND_URL}/login?error=no_user_found`);
+        }
+        
+        // Send token to user
+        sendToken(user, 200, "Google authentication successful.", res, () => {
+            res.redirect(`${process.env.FRONTEND_URL}/?login=success`);
+        });
+    })(req, res, next);
+};

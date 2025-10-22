@@ -2,7 +2,9 @@ import express from 'express';
 import { config } from "dotenv"
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import passport from 'passport';
 import { connectDB } from './database/db.js';
+import { configurePassport } from './config/passport.js';
 import authRouter from './routes/authRouter.js';
 import bookRouter from './routes/bookRouter.js';
 import borrowRouter from './routes/borrowRouter.js';
@@ -17,6 +19,9 @@ export const app = express();
 
 config({ path: "./config/config.env" });
 
+// Initialize Passport
+configurePassport();
+
 app.use(cors({
     origin: [process.env.FRONTEND_URL],
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -26,6 +31,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 app.use(expressFileupload({
     useTempFiles: true,
     tempFileDir: "/temp/",

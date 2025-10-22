@@ -1,5 +1,5 @@
 import express from 'express';
-import { forgotPassword, getUser, login, logout, register, resetPassword, updatePassword, verifyOTP } from '../controllers/authController.js';
+import { forgotPassword, getUser, googleAuth, googleAuthCallback, login, logout, register, resetPassword, updatePassword, verifyOTP } from '../controllers/authController.js';
 import { isAuthenticated } from '../middlewares/authMiddleWare.js';
 
 
@@ -12,5 +12,9 @@ router.get("/me", isAuthenticated, getUser);
 router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPassword);
 router.put("/password/update", isAuthenticated, updatePassword);
+
+// Google OAuth routes
+router.get("/google", googleAuth);
+router.get("/google/callback", googleAuthCallback);
 
 export default router;
