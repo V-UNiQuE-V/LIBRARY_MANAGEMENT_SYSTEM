@@ -1,4 +1,4 @@
-import { Link, Navigate, useParams, data } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import logo from "../assets/black-logo.png";
 import logo_with_title from "../assets/logo-with-title.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,7 +34,7 @@ const ResetPassword = () => {
         toast.error(error);
         dispatch(resetAuthSlice());
       }
-    }, [dispatch, isAuthenticated, error, loading]);
+    }, [dispatch, isAuthenticated, error, loading, message]);
   
     if(isAuthenticated) {
       return <Navigate to={"/"} />;
