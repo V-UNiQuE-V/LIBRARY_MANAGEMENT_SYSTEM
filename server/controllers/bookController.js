@@ -2,6 +2,8 @@ import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import { Book } from "../models/bookModel.js"
 import ErrorHandler from "../middlewares/errorMiddleware.js";
 import { validateFields } from "../utils/validateFields.js";
+import { Borrow } from "../models/borrowModel.js";
+import { User } from "../models/userModel.js";
 
 export const addBook = catchAsyncErrors(async (req, res, next) => {
     const { title, author, description, price, quantity } = req.body;
@@ -47,10 +49,23 @@ export const getAllBooks = catchAsyncErrors(async (req, res, next) => {
 
 export const deleteBook = catchAsyncErrors(async (req, res, next) => {
     const {id} = req.params;
-    const book = await Book.findByIdAndDelete(id);
+    const book = await Book.findById(id);
     if(!book) {
         return next(new ErrorHandler("Book not found", 404));
     }
+    
+    // Delete all borrow records (both returned and non-returned) for this book
+    await Borrow.deleteMany({ book: id });
+    
+    // Remove book references from all users' borrowedBooks arrays
+    await User.updateMany(
+        { "borrowedBooks.bookId": id },
+        { $pull: { borrowedBooks: { bookId: id } } }
+    );
+    
+    // Finally, delete the book itself
+    await Book.findByIdAndDelete(id);
+    
     res.status(200).json({
         success: true,
         message: "Book deleted successfully.",
