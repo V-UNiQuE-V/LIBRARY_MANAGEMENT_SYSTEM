@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import adminIcon from "../assets/pointing.png";
-import avatarHolder from "../assets/placeholder.jpg";
+import avatarHolder from "../assets/avatar.png";
 import usersIcon from "../assets/people-black.png";
 import bookIcon from "../assets/book-square.png";
 import { Pie } from "react-chartjs-2";
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
   const {users} = useSelector(state => state.user);
   const {books} = useSelector(state => state.book);
   const {allBorrowedBooks} = useSelector(state => state.borrow);
-  const {settingPopup} = useSelector(state => state.popup);
+  // const {settingPopup} = useSelector(state => state.popup);
 
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalAdmin, setTotalAdmin] = useState(0);
@@ -52,6 +52,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     let numberOfUsers = users.filter((user => user.role === "User"));
     let numberOfAdmins = users.filter((user => user.role === "Admin"));
+    setTotalBooks(books && books.length);
     setTotalUsers(numberOfUsers.length);
     setTotalAdmin(numberOfAdmins.length);
 
@@ -152,7 +153,7 @@ const AdminDashboard = () => {
             <div className="flex flex-col lg:flex-row flex-1 items-center justify-center">
               <div className="bg-white p-5 rounded-lg shadow-lg h-full flex flex-col justify-center items-center">
                 <img 
-                  src={user && user?.avatar?.url || "/avatarHolder"}
+                  src={user && user?.avatar?.url || avatarHolder}
                   alt="Admin Profile Pic"
                   className="rounded-full w-32 h-32 object-cover"
                 />
