@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {Link, Navigate, useNavigate } from "react-router-dom";  
 import {register, resetAuthSlice} from "../store/slices/authSlice";
 import { toast } from "react-toastify";
+import { FcGoogle } from "react-icons/fc";
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -24,6 +25,10 @@ const Register = () => {
     data.append("email",email);
     data.append("password",password);
     dispatch(register(data));
+  };
+
+  const handleGoogleSignup = () => {
+    window.location.href = "http://localhost:4000/api/v1/auth/google";
   };
 
 
@@ -105,6 +110,19 @@ const Register = () => {
                 </p>
               </div>
               <button type="submit" className="border-2 mt-5 border-black w-full font-semibold bg-black text-white py-2 rounded-lg hover:bg-white hover:text-black transition">SIGN UP</button>
+              <div className="my-4 flex items-center justify-center">
+                <div className="border-t border-gray-300 flex-grow"></div>
+                <span className="px-4 text-gray-500 text-sm">OR</span>
+                <div className="border-t border-gray-300 flex-grow"></div>
+              </div>
+              <button 
+                type="button"
+                onClick={handleGoogleSignup}
+                className="border-2 border-gray-300 w-full font-semibold bg-white text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-2"
+              >
+                <FcGoogle size={24} />
+                Sign up with Google
+              </button>
             </form>
 
 
