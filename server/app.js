@@ -7,6 +7,7 @@ import authRouter from './routes/authRouter.js';
 import bookRouter from './routes/bookRouter.js';
 import borrowRouter from './routes/borrowRouter.js';
 import userRouter from './routes/userRouter.js';
+import feedbackRouter from './routes/feedbackRouter.js';
 import expressFileupload from "express-fileupload"
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import { removeUnverifiedAccounts } from './services/removeUnverifiedAccounts.js';
@@ -35,6 +36,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/book", bookRouter);
 app.use("/api/v1/borrow", borrowRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/feedback", feedbackRouter);
 
 notifyUsers();
 removeUnverifiedAccounts();
