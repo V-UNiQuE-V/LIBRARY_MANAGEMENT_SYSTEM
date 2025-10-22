@@ -3,7 +3,7 @@ import closeIcon from "../assets/close-square.png";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePassword } from '../store/slices/authSlice';
 import settingIcon from "../assets/setting.png";
-import {toggleSettingPopup} from "../store/slices/popupSlice";
+import {toggleSettingPopup} from "../store/slices/popUpSlice";
 
 const SettingPopup = () => {
   const [currentPassword, setCurrentPassword] = useState("");
