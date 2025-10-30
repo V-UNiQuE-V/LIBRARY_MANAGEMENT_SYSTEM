@@ -1,0 +1,3 @@
+[submodule "feedback-microservice"]
+	path = feedback-microservice
+	url = https://github.com/V-UNIQUe-V/microservice.git
