@@ -8,6 +8,7 @@ import AdminDashboard from "../components/AdminDashboard";
 import BookManagement from "../components/BookManagement";
 import MyBorrowedBooks from "../components/MyBorrowedBooks";
 import Catalog from "../components/Catalog";
+import FeedbackForm from "../components/FeedbackForm";
 import Users from "../components/Users";
 
 const Home = () => {
@@ -58,7 +59,8 @@ const Home = () => {
                     break;
                   case "My Borrowed Books":
                     return <MyBorrowedBooks />;
-
+                  case "Feedback": 
+                    return <FeedbackForm />;
                   default:
                     return user?.role === "User" ? (
                       <UserDashboard />

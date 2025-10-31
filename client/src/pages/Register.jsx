@@ -49,7 +49,7 @@ const Register = () => {
     <div className="flex flex-col justify-center md:flex-row h-screen">
       {/* Left side */}
       <div className="hidden w-full md:w-1/2 bg-black text-white md:flex flex-col items-center justify-center p-8 rounded-tr-[80px] rounded-br-[80px]">
-        <div className="text-center h-[376px]">
+        <div className="text-center h-[550px]">
           <div className="flex justify-center mb-12">
             <img src={logo_with_title} alt="logo" />
           </div>

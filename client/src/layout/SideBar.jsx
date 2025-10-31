@@ -9,6 +9,7 @@ import catalogIcon from "../assets/catalog.png";
 import settingIcon from "../assets/setting-white.png";
 import usersIcon from "../assets/people.png";
 import { RiAdminFill } from "react-icons/ri";
+import { MdFeedback } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import {resetAuthSlice, logout} from "../store/slices/authSlice";
 import {toast} from "react-toastify";
@@ -102,6 +103,12 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
           >
             <img src={settingIcon} alt="setting" />{" "}
             <span>Update Credentials</span>
+          </button>
+          <button
+            onClick={() => setSelectedComponent("Feedback")}
+            className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
+          >
+            <MdFeedback className="w-6 h-6" /> <span>Feedback</span>
           </button>
         </nav>
         <div className="px-6 py-4">
